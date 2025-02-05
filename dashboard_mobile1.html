@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Produção - Turno A</title>  
+    <link rel="stylesheet" href="styleturnoA.css">
+    <script defer src="scriptturnoA.js"></script>
+    <link rel="icon" type="image/x-icon" href="caminhao.ico">
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <a href="inicial.html" class="voltar">Voltar</a>
+            <h1>Dashboard de Produção - Turno A</h1>
+            <p id="data-hora"></p> <!-- Exibe a data e hora atual aqui -->
+        </header>
+        <div class="indicadores">
+            <div class="indicador">
+                <h2>Produção atual (tbu)</h2>
+                <p id="producao-bruta">0 toneladas</p>
+            </div>
+            <div class="indicador">
+                <h2>Produção atual (tbs)</h2>
+                <p id="producao-base-seca">0 toneladas</p>
+            </div>
+            <div class="indicador">
+                <h2>Ritmo Produção por Turno:</h2>
+                <p id="producao-estimada" class="producao-estimada">0 toneladas</p>
+            </div>
+        </div>        
+
+        <!-- Seção de Produção -->
+        <section class="producao">
+            <h2>Produção:</h2>
+            <p>Toneladas restantes para atingir a meta (tbu): <span id="meta-faltante-bruta">0</span></p>
+        <p>Toneladas restantes para atingir a meta (tbs): <span id="meta-faltante-base-seca">0</span></p></p>
+        </section>
+        <!-- Entrada de Produção Atual -->
+        <input type="number" id="input-producao" placeholder="Insira a produção atual">
+    </div>
+</body>
+</html>
+

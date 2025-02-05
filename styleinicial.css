@@ -1,0 +1,76 @@
+/* Resetando algumas configurações padrões */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Definindo a fonte padrão */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #cbddca;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container principal */
+.container {
+    width: 100%;
+    max-width: 360px;  /* Ajuste para dispositivos móveis */
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Cabeçalho */
+header h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2C3E50;
+}
+
+/* Estilo para as opções de turno */
+.turnos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Estilo dos cards de turno */
+.turno {
+    background-color: #75c3a5bf;
+    padding: 20px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+}
+
+/* Efeito ao passar o mouse nos cards */
+.turno:hover {
+    transform: scale(1.05);
+}
+
+.turno-info h2 {
+    color: #fff;
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+.turno-info p {
+    color: #ecf0f1;
+    font-size: 14px;
+}
+
+/* Remover o sublinhado dos links */
+a {
+    text-decoration: none;
+}
+
+/* Ajustando o texto dentro do link */
+.turno-info {
+    display: block;
+}
