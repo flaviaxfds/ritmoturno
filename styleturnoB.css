@@ -98,4 +98,9 @@ p {
     font-size: 1.2em;
     margin: 10px 0;
 }
+input[type="number"]:focus {
+    border-color: #6e87cc;
+    outline: none;
+    box-shadow: 0 0 5px rgba(110, 135, 204, 0.5);
+}
 

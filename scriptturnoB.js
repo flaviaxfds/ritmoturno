@@ -1,78 +1,78 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const inputProducao = document.getElementById("input-producao");
-    const producaoBruta = document.getElementById("producao-bruta");
-    const producaoBaseSeca = document.getElementById("producao-base-seca");
-    const ritmo = document.getElementById("ritmo");
-    const metaFaltanteBruta = document.getElementById("meta-faltante-bruta");
-    const metaFaltanteBaseSeca = document.getElementById("meta-faltante-base-seca");
+    const producaoBruta = document.getElementById("producao-bruta"); // TBU
+    const producaoBaseSeca = document.getElementById("producao-base-seca"); // TBS
+    const metaFaltanteBruta = document.getElementById("meta-faltante-bruta"); // TBU restante
+    const metaFaltanteBaseSeca = document.getElementById("meta-faltante-base-seca"); // TBS restante
+    const ritmo = document.getElementById("producao-estimada");
 
-    const META_BRUTA = 22500; // Meta total do turno (tbu)
-    let producaoAtual = 0; // Variável para armazenar a produção atual
+    // Meta de produção
+    const META_BRUTA = 22500; // Meta em toneladas brutas
 
-    // Função para calcular o ritmo e a produção estimada
-    function calcularRitmoEProjecao() {
+    // Função para calcular a produção estimada
+    function calcularProducaoEstimada() {
         const agora = new Date();
-        
-        // Definir o início e fim do turno considerando a transição de dia (19:15h - 06:59h)
-        let turnoInicio, turnoFim;
-        if (agora.getHours() >= 0 && agora.getHours() < 7) {
-            // Se estamos entre 00h e 06:59h, o turno atual deve ser o do dia anterior (19:15h - 23:59h)
-            turnoInicio = new Date(agora);
-            turnoInicio.setDate(turnoInicio.getDate() - 1); // Ajusta para o dia anterior
-            turnoInicio.setHours(19, 15, 0, 0); // 19:15h do dia anterior
-            turnoFim = new Date(agora);
-            turnoFim.setHours(6, 59, 0, 0); // 06:59h do mesmo dia
+        const producaoAtual = parseFloat(inputProducao.value) || 0;
+
+        // Definir início e fim do turno
+        const inicioTurno = new Date(agora);
+        inicioTurno.setHours(19, 15, 0, 0); // 19:15h de hoje
+
+        const fimTurno = new Date(agora);
+        if (agora.getHours() < 7) {
+            fimTurno.setDate(fimTurno.getDate());
         } else {
-            // Se estamos entre 19:15h e 23:59h
-            turnoInicio = new Date(agora);
-            turnoInicio.setHours(19, 15, 0, 0); // 19:15h do dia atual
-            turnoFim = new Date(agora);
-            turnoFim.setDate(turnoFim.getDate() + 1); // Ajusta para o próximo dia
-            turnoFim.setHours(6, 59, 0, 0); // 06:59h do dia seguinte
+            fimTurno.setDate(fimTurno.getDate() + 1);
+        }
+        fimTurno.setHours(6, 59, 0, 0); // 06:59h
+
+        // Calcular tempo decorrido desde 19:15h
+        let tempoDecorrido = (agora - inicioTurno) / (1000 * 60 * 60); // Em horas
+        if (tempoDecorrido < 0) {
+            tempoDecorrido += 24; // Ajuste se a hora atual for antes das 19:15h
         }
 
-        // Total de pausas (1h30min = 1.5 horas)
-        const tempoPausas = 1.5;
+        // Calcular tempo restante até 06:59h
+        let tempoRestante = (fimTurno - agora) / (1000 * 60 * 60); // Em horas
+        tempoRestante -= 1.25; // Remover pausas (1h refeição + 15min pausa)
 
-        // Calcular o tempo trabalhado até agora (em horas)
-        let tempoTrabalhado = (agora - turnoInicio) / (1000 * 60 * 60);  // Tempo em horas
-        tempoTrabalhado -= tempoPausas;  // Subtrair o tempo de pausas
+        if (tempoDecorrido > 0) {
+            // Ritmo de produção por hora
+            const ritmoAtual = producaoAtual / tempoDecorrido;
 
-        // Garantir que o tempo trabalhado seja maior que 0
-        if (tempoTrabalhado <= 0) {
-            ritmo.textContent = "0 toneladas/hora";
-            return;
+            // Produção estimada final
+            const producaoEstimada = producaoAtual + (ritmoAtual * tempoRestante);
+
+            // Exibir resultado
+            ritmo.textContent = `${producaoEstimada.toFixed(2)} toneladas`;
+        } else {
+            ritmo.textContent = "Aguardando início do turno...";
         }
 
-        // Calcular o ritmo de produção (toneladas por hora)
-        let ritmoPorHora = producaoAtual / tempoTrabalhado;
+        // Cálculo da tonelada faltante para a meta (TBU e TBS)
+        const faltanteBruta = Math.max(META_BRUTA - producaoAtual, 0); // Para TBU
+        const faltanteBaseSeca = Math.max((META_BRUTA * 0.97) - (producaoAtual * 0.97), 0); // Para TBS
 
-        // Calcular o tempo restante no turno
-        let tempoRestante = (turnoFim - agora) / (1000 * 60 * 60);  // Tempo restante em horas
-        tempoRestante -= tempoPausas;  // Subtrair o tempo de pausas restantes
-
-        if (tempoRestante <= 0) {
-            tempoRestante = 0;
-        }
-
-        // Calcular a produção estimada até o final do turno
-        let producaoEstimadaFinal = producaoAtual + (ritmoPorHora * tempoRestante);
-
-        // Atualizar o HTML com as informações calculadas
-        ritmo.textContent = ritmoPorHora.toFixed(2) + " toneladas/hora";
-        metaFaltanteBruta.textContent = (META_BRUTA - producaoEstimadaFinal).toFixed(2);
-        metaFaltanteBaseSeca.textContent = ((META_BRUTA - producaoEstimadaFinal) * 0.97).toFixed(2);
+        // Atualiza as metas faltantes
+        metaFaltanteBruta.textContent = `${faltanteBruta.toFixed(2)} toneladas`;
+        metaFaltanteBaseSeca.textContent = `${faltanteBaseSeca.toFixed(2)} toneladas`;
     }
 
-    // Atualizar os valores de produção e base seca ao digitar
-    inputProducao.addEventListener("input", function() {
-        producaoAtual = parseFloat(inputProducao.value) || 0;
+    // Atualiza a cada vez que um novo valor é inserido
+    inputProducao.addEventListener("input", function () {
+        const producaoAtual = parseFloat(inputProducao.value) || 0;
 
-        // Atualizar produção bruta e base seca
-        producaoBruta.textContent = producaoAtual.toFixed(2);
-        producaoBaseSeca.textContent = (producaoAtual * 0.97).toFixed(2);
+        // Atualiza Produção Atual (TBU)
+        producaoBruta.textContent = `${producaoAtual.toFixed(2)} toneladas`;
 
-        // Calcular ritmo e produção estimada
-        calcularRitmoEProjecao();
+        // Atualiza Produção Atual (TBS) com multiplicação por 0.97
+        const baseSeca = producaoAtual * 0.97;
+        producaoBaseSeca.textContent = `${baseSeca.toFixed(2)} toneladas`;
+
+        // Chama a função para calcular a produção estimada e as metas faltantes
+        calcularProducaoEstimada();
     });
+
+    // Chama a função ao carregar a página para garantir que os valores iniciais sejam mostrados corretamente
+    calcularProducaoEstimada();
 });
