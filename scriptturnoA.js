@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const ritmoDeProducao = (producaoAtual / (horaAtual - turnoInicio) * (1000 * 60 * 60)); // Ritmo por hora
 
         const producaoFinal = ritmoDeProducao * tempoRestante; // Produção estimada até o fim do turno
-        producaoEstimada.textContent = (producaoFinal + producaoAtual).toFixed(2) + " toneladas";
+        producaoEstimada.textContent = (producaoFinal + producaoAtual).toFixed(2) + " tbu";
     }
 
     // Função para atualizar produção e base seca
@@ -81,9 +81,33 @@ document.addEventListener("DOMContentLoaded", function() {
         let faltanteBruta = Math.max(META_BRUTA - producaoAtual, 0);
         let faltanteBaseSeca = Math.max((META_BRUTA * 0.97) - baseSeca, 0);
 
-        metaFaltanteBruta.textContent = faltanteBruta.toFixed(2) + " toneladas";
-        metaFaltanteBaseSeca.textContent = faltanteBaseSeca.toFixed(2) + " toneladas";
+        metaFaltanteBruta.textContent = faltanteBruta.toFixed(2) + "t";
+        metaFaltanteBaseSeca.textContent = faltanteBaseSeca.toFixed(2) + "t";
     });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    const agora = new Date();
+    const horaAtual = agora.getHours();
+    const minutosAtuais = agora.getMinutes();
+
+    const estaNoTurno = (horaAtual >= 7 && (horaAtual < 19 || (horaAtual === 18 && minutosAtuais <= 59)));
+
+    if (!estaNoTurno) {
+        exibirPopUpForaDoTurno();
+    }
+
+    function exibirPopUpForaDoTurno() {
+        const popup = document.createElement("div");
+        popup.classList.add("popup-turno");
+        popup.innerHTML = "<p>⚠ FORA DO TURNO ⚠</p>";
+
+        document.body.appendChild(popup);
+
+        setTimeout(() => {
+            popup.style.opacity = "0";
+            setTimeout(() => popup.remove(), 500);
+        }, 2000);
+    }
 });
 
 

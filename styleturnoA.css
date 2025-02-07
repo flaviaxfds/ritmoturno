@@ -122,17 +122,43 @@ p {
         box-shadow: 0 0 20px rgba(37, 122, 250, 0.897);
     }
 }
-.rodape {
-    text-align: center;
-    font-size: 0.9em;
-    color: #555;
-    padding: 15px;
-    background-color: #f0f0f0;
+.popup-turno {
     position: fixed;
-    bottom: 0;
-    width: 100%;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    opacity: 0; /* Começa invisível */
-    transition: opacity 0.5s ease-in-out; /* Efeito suave */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* Para telas pequenas */
+    max-width: 400px;
+    background-color: #ff0000;
+    color: #ffffff;
+    font-size: 1.8em;
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    z-index: 1000;
+    text-align: center;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+/* Efeito de piscar */
+@keyframes piscar {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+}
+
+/* Desaparece suavemente */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Aplica os efeitos */
+.popup-turno {
+    animation: piscar 0.6s infinite alternate, fadeOut 2s forwards 1.5s;
+}
+
 

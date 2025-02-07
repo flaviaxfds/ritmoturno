@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const producaoEstimada = producaoAtual + (ritmoAtual * tempoRestante);
 
             // Exibir resultado
-            ritmo.textContent = `${producaoEstimada.toFixed(2)} toneladas`;
+            ritmo.textContent = `${producaoEstimada.toFixed(2)} tbu`;
         } else {
             ritmo.textContent = "Aguardando início do turno...";
         }
@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const faltanteBaseSeca = Math.max((META_BRUTA * 0.97) - (producaoAtual * 0.97), 0); // Para TBS
 
         // Atualiza as metas faltantes
-        metaFaltanteBruta.textContent = `${faltanteBruta.toFixed(2)} toneladas`;
-        metaFaltanteBaseSeca.textContent = `${faltanteBaseSeca.toFixed(2)} toneladas`;
+        metaFaltanteBruta.textContent = `${faltanteBruta.toFixed(2)} t`;
+        metaFaltanteBaseSeca.textContent = `${faltanteBaseSeca.toFixed(2)} t`;
     }
 
     // Atualiza a cada vez que um novo valor é inserido
@@ -75,4 +75,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Chama a função ao carregar a página para garantir que os valores iniciais sejam mostrados corretamente
     calcularProducaoEstimada();
+});
+document.addEventListener("DOMContentLoaded", function() {
+    const agora = new Date();
+    const horaAtual = agora.getHours();
+    const minutosAtuais = agora.getMinutes();
+
+    const estaNoTurno = 
+        (horaAtual > 19 || (horaAtual === 19 && minutosAtuais >= 0)) || // Das 19h em diante
+        (horaAtual < 7 || (horaAtual === 6 && minutosAtuais <= 59)); // Até 06:59h
+
+    if (!estaNoTurno) {
+        exibirPopUpForaDoTurno();
+    }
+
+    function exibirPopUpForaDoTurno() {
+        const popup = document.createElement("div");
+        popup.classList.add("popup-turno");
+        popup.innerHTML = "<p>FORA DO TURNO</p>";
+
+        document.body.appendChild(popup);
+
+        setTimeout(() => {
+            popup.style.opacity = "0";
+            setTimeout(() => popup.remove(), 500); // Remove o pop-up após o fade-out
+        }, 2000); // Tempo de exibição: 2 segundos
+    }
 });
