@@ -193,5 +193,16 @@ body {
     from { transform: scaleX(0); }
     to { transform: scaleX(1); }
 }
+.rodape {
+    text-align: center;
+    font-size: 0.9em;
+    color: #555;
+    padding: 15px;
+    background-color: #f0f0f0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
 
 
