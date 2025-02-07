@@ -98,4 +98,28 @@ p {
     font-size: 1.2em;
     margin: 10px 0;
 }
+/* Estilo da Produção Estimada - Maior destaque */
+.producao-estimada {
+    font-size: 2em; /* Aumenta o tamanho da fonte */
+    color: #637fce; /* Cor chamativa (laranja) */
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 15px;
+    border: 3px solid #6ca1c0; /* Borda destacada */
+    border-radius: 8px;
+    background: rgba(162, 197, 185, 0.76); /* Fundo sutil */
+    box-shadow: 0 0 15px rgba(55, 85, 139, 0.3); /* Efeito de brilho */
+    animation: pulsar 1.5s infinite alternate ease-in-out;
+}
+
+/* Efeito de pulsação suave */
+@keyframes pulsar {
+    from {
+        box-shadow: 0 0 5px rgba(10, 11, 105, 0.5);
+    }
+    to {
+        box-shadow: 0 0 20px rgba(37, 122, 250, 0.897);
+    }
+}
 

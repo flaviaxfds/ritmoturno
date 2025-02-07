@@ -74,3 +74,124 @@ a {
 .turno-info {
     display: block;
 }
+.titulo-container {
+    text-align: center;
+    margin-bottom: 10px; /* Espaço antes do container */
+}
+
+.ritmo-producao {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    padding: 10px;
+}
+body {
+    display: flex;
+    flex-direction: column; /* Alinha tudo em coluna */
+    align-items: center; /* Garante centralização */
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.ritmo-producao {
+    font-size: 24px; /* Tamanho ajustado para mobile */
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px; /* Ajuste para mobile */
+    text-align: center;
+}
+.ritmo-producao {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333; /* Cor neutra e elegante */
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Efeito sublinhado animado */
+.ritmo-producao::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: #007bff; /* Azul elegante */
+    left: 0;
+    bottom: 0;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+.ritmo-producao:hover::after {
+    transform: scaleX(1);
+}
+
+/* Efeito de fade-in suave */
+.ritmo-producao {
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Efeito só pra o celular TESTAR */
+.ritmo-producao {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333; /* Cor neutra e elegante */
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Sublinhado animado SEM hover (funciona no mobile) */
+.ritmo-producao::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: #007bff; /* Azul elegante */
+    left: 0;
+    bottom: 0;
+    transform: scaleX(0);
+    animation: underlineGrow 1s ease-in-out forwards 0.5s;
+}
+
+/* Efeito de fade-in suave ao carregar */
+.ritmo-producao {
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes underlineGrow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+
