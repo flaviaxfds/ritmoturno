@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const faltanteBaseSeca = Math.max((META_BRUTA * 0.97) - (producaoAtual * 0.97), 0); // Para TBS
 
         // Atualiza as metas faltantes
-        metaFaltanteBruta.textContent = `${faltanteBruta.toFixed(2)} t`;
-        metaFaltanteBaseSeca.textContent = `${faltanteBaseSeca.toFixed(2)} t`;
+        metaFaltanteBruta.textContent = `${faltanteBruta.toFixed(2)}t`;
+        metaFaltanteBaseSeca.textContent = `${faltanteBaseSeca.toFixed(2)}t`;
     }
 
     // Atualiza a cada vez que um novo valor é inserido
