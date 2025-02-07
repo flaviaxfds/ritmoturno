@@ -15,10 +15,31 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let producaoAtual = 0;
 
+    // Função para calcular o tempo restante, considerando as pausas
+    function calcularTempoRestante() {
+        const horaAtual = new Date();
+        let tempoRestante = (turnoFim - horaAtual) / (1000 * 60 * 60); // Tempo total sem descontar pausas
+
+        // Desconto de 15 minutos do início do turno
+        if (horaAtual >= new Date().setHours(7, 1) && horaAtual < new Date().setHours(7, 16)) {
+            tempoRestante -= 15 / 60; // Remove 15 min da contagem
+        }
+        // Desconto de 1 hora para o intervalo de almoço
+        if (horaAtual >= new Date().setHours(12, 0) && horaAtual < new Date().setHours(13, 0)) {
+            tempoRestante -= 1; // Remove 1 hora do intervalo
+        }
+        // Desconto de 15 minutos no final do turno
+        if (horaAtual >= new Date().setHours(18, 44) && horaAtual < new Date().setHours(18, 59)) {
+            tempoRestante -= 15 / 60; // Remove 15 min finais
+        }
+
+        return tempoRestante;
+    }
+
     // Função para calcular a produção estimada
     function calcularProducaoEstimada() {
         const horaAtual = new Date();
-        const tempoRestante = (turnoFim - horaAtual) / (1000 * 60 * 60); // Tempo restante em horas
+        const tempoRestante = calcularTempoRestante(); // Usando a função que desconta pausas
 
         const ritmoDeProducao = (producaoAtual / (horaAtual - turnoInicio) * (1000 * 60 * 60)); // Ritmo por hora
 
@@ -60,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Atualizando a data e hora atual a cada segundo (incluindo os segundos)
     setInterval(exibirDataHora, 1000);
 });
+
 document.addEventListener("DOMContentLoaded", function() {
     const inputProducao = document.getElementById("input-producao");
     const producaoBruta = document.getElementById("producao-bruta");
@@ -85,6 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
         metaFaltanteBaseSeca.textContent = faltanteBaseSeca.toFixed(2) + "t";
     });
 });
+
 document.addEventListener("DOMContentLoaded", function() {
     const agora = new Date();
     const horaAtual = agora.getHours();
@@ -99,14 +122,8 @@ document.addEventListener("DOMContentLoaded", function() {
     function exibirPopUpForaDoTurno() {
         const popup = document.createElement("div");
         popup.classList.add("popup-turno");
-        popup.innerHTML = "<p>⚠ FORA DO TURNO ⚠</p>";
-
+        popup.innerHTML = "<p>⚠ FORA DO TURNO ⚠</p><p>O turno de operação vai de 07:01 às 18:59.</p>";
         document.body.appendChild(popup);
-
-        setTimeout(() => {
-            popup.style.opacity = "0";
-            setTimeout(() => popup.remove(), 500);
-        }, 2000);
     }
 });
 
