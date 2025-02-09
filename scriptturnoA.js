@@ -104,4 +104,20 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(exibirDataHora, 1000);
 });
 
+function calcularRitmoNecessario() {
+    const horaAtual = new Date();
+    const tempoRestante = calcularTempoRestante(); // Usa a função já existente
+    const producaoFaltante = META_BRUTA - producaoAtual;
+
+    if (tempoRestante <= 0) {
+        return 0; // Se o turno já acabou, ritmo necessário é 0
+    }
+
+    const ritmoNecessario = producaoFaltante / tempoRestante;
+    return ritmoNecessario.toFixed(2); // Retorna o ritmo necessário com 2 casas decimais
+}
+
+// Exemplo de uso:
+const ritmoNecessario = calcularRitmoNecessario();
+console.log(`Ritmo necessário: ${ritmoNecessario} toneladas por hora`);
 
