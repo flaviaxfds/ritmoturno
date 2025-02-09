@@ -1,132 +1,107 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const inputProducao = document.getElementById("input-producao");
-    const producaoBruta = document.getElementById("producao-bruta");
-    const producaoBaseSeca = document.getElementById("producao-base-seca");
-    const meta = document.getElementById("meta");
-    const ritmo = document.getElementById("ritmo");
-    const producaoEstimada = document.getElementById("producao-estimada");
-    const dataHoraElement = document.getElementById("data-hora");
-
-    const turnoInicio = new Date();
-    turnoInicio.setHours(7, 1, 0, 0);  // 07:01h
-
-    const turnoFim = new Date();
-    turnoFim.setHours(18, 59, 0, 0);  // 18:59h
-
-    let producaoAtual = 0;
-
-    // Função para calcular o tempo restante, considerando as pausas
-    function calcularTempoRestante() {
-        const horaAtual = new Date();
-        let tempoRestante = (turnoFim - horaAtual) / (1000 * 60 * 60); // Tempo total sem descontar pausas
-
-        // Desconto de 15 minutos do início do turno
-        if (horaAtual >= new Date().setHours(7, 1) && horaAtual < new Date().setHours(7, 16)) {
-            tempoRestante -= 15 / 60; // Remove 15 min da contagem
-        }
-        // Desconto de 1 hora para o intervalo de almoço
-        if (horaAtual >= new Date().setHours(12, 0) && horaAtual < new Date().setHours(13, 0)) {
-            tempoRestante -= 1; // Remove 1 hora do intervalo
-        }
-        // Desconto de 15 minutos no final do turno
-        if (horaAtual >= new Date().setHours(18, 44) && horaAtual < new Date().setHours(18, 59)) {
-            tempoRestante -= 15 / 60; // Remove 15 min finais
-        }
-
-        return tempoRestante;
-    }
-
-    // Função para calcular a produção estimada
-    function calcularProducaoEstimada() {
-        const horaAtual = new Date();
-        const tempoRestante = calcularTempoRestante(); // Usando a função que desconta pausas
-
-        const ritmoDeProducao = (producaoAtual / (horaAtual - turnoInicio) * (1000 * 60 * 60)); // Ritmo por hora
-
-        const producaoFinal = ritmoDeProducao * tempoRestante; // Produção estimada até o fim do turno
-        producaoEstimada.textContent = (producaoFinal + producaoAtual).toFixed(2) + " tbu";
-    }
-
-    // Função para atualizar produção e base seca
-    inputProducao.addEventListener("input", function() {
-        const valor = parseFloat(inputProducao.value) || 0;
-        producaoAtual = valor;
-
-        const baseSeca = valor * 0.97;
-        producaoBruta.textContent = valor.toFixed(2);
-        producaoBaseSeca.textContent = baseSeca.toFixed(2);
-
-        ritmo.textContent = ((valor / (new Date() - turnoInicio) * (1000 * 60 * 60)) || 0).toFixed(2) + " toneladas/hora";
-
-        calcularProducaoEstimada();
-    });
-
-    // Função para exibir data e hora atual no formato abreviado com segundos
-    function exibirDataHora() {
-        const dataAtual = new Date();
-        const dia = String(dataAtual.getDate()).padStart(2, '0');
-        const mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Mês começa do 0
-        const ano = dataAtual.getFullYear();
-        const horas = String(dataAtual.getHours()).padStart(2, '0');
-        const minutos = String(dataAtual.getMinutes()).padStart(2, '0');
-        const segundos = String(dataAtual.getSeconds()).padStart(2, '0');
-        
-        const dataFormatada = `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
-        dataHoraElement.textContent = dataFormatada;
-    }
-
-    // Atualizando a produção estimada a cada segundo
-    setInterval(calcularProducaoEstimada, 1000);
-
-    // Atualizando a data e hora atual a cada segundo (incluindo os segundos)
-    setInterval(exibirDataHora, 1000);
-});
-
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const inputProducao = document.getElementById("input-producao");
     const producaoBruta = document.getElementById("producao-bruta");
     const producaoBaseSeca = document.getElementById("producao-base-seca");
     const producaoEstimada = document.getElementById("producao-estimada");
     const metaFaltanteBruta = document.getElementById("meta-faltante-bruta");
     const metaFaltanteBaseSeca = document.getElementById("meta-faltante-base-seca");
+    const dataHoraElement = document.getElementById("data-hora");
 
-    const META_BRUTA = 22500;
+    const META_BRUTA = 22500; // Meta em toneladas brutas
+    const turnoInicio = new Date();
+    turnoInicio.setHours(7, 1, 0, 0); // Início do turno às 07:01h
+    const turnoFim = new Date();
+    turnoFim.setHours(18, 59, 0, 0); // Fim do turno às 18:59h
 
-    inputProducao.addEventListener("input", function() {
-        let producaoAtual = parseFloat(inputProducao.value) || 0;
-        let baseSeca = producaoAtual * 0.97; // Conversão para base seca
+    let producaoAtual = 0; // Armazena a produção atual
 
+    // Função para calcular o tempo decorrido, descontando pausas
+    function calcularTempoDecorrido() {
+        const horaAtual = new Date();
+        let tempoDecorrido = (horaAtual - turnoInicio) / (1000 * 60 * 60); // Tempo em horas
+
+        // Desconto de 1 hora de refeição (12:00h às 13:00h)
+        if (horaAtual >= new Date().setHours(12, 0) && horaAtual < new Date().setHours(13, 0)) {
+            tempoDecorrido -= 1;
+        }
+
+        // Desconto de 30 minutos de pausas
+        tempoDecorrido -= 0.5;
+
+        return tempoDecorrido;
+    }
+
+    // Função para calcular o tempo restante, descontando pausas
+    function calcularTempoRestante() {
+        const horaAtual = new Date();
+        let tempoRestante = (turnoFim - horaAtual) / (1000 * 60 * 60); // Tempo em horas
+
+        // Desconto de 1 hora de refeição (12:00h às 13:00h)
+        if (horaAtual >= new Date().setHours(12, 0) && horaAtual < new Date().setHours(13, 0)) {
+            tempoRestante -= 1;
+        }
+
+        // Desconto de 30 minutos de pausas
+        tempoRestante -= 0.5;
+
+        return tempoRestante;
+    }
+
+    // Função para calcular a produção estimada até o fim do turno
+    function calcularProducaoEstimada() {
+        const tempoDecorrido = calcularTempoDecorrido();
+        const tempoRestante = calcularTempoRestante();
+
+        if (tempoDecorrido <= 0) {
+            producaoEstimada.textContent = "0 toneladas";
+            return;
+        }
+
+        const ritmoDeProducao = producaoAtual / tempoDecorrido; // Ritmo em toneladas por hora
+        const producaoFinal = ritmoDeProducao * tempoRestante; // Produção estimada
+        producaoEstimada.textContent = (producaoFinal + producaoAtual).toFixed(2) + " toneladas";
+    }
+
+    // Função para atualizar a produção bruta, base seca e meta faltante
+    inputProducao.addEventListener("input", function () {
+        producaoAtual = parseFloat(inputProducao.value) || 0;
+
+        // Atualiza produção bruta
         producaoBruta.textContent = producaoAtual.toFixed(2) + " toneladas";
+
+        // Atualiza produção base seca (97% da produção bruta)
+        const baseSeca = producaoAtual * 0.97;
         producaoBaseSeca.textContent = baseSeca.toFixed(2) + " toneladas";
 
-        // Cálculo da tonelada faltante para a meta
-        let faltanteBruta = Math.max(META_BRUTA - producaoAtual, 0);
-        let faltanteBaseSeca = Math.max((META_BRUTA * 0.97) - baseSeca, 0);
+        // Atualiza meta faltante (bruta e base seca)
+        const faltanteBruta = Math.max(META_BRUTA - producaoAtual, 0);
+        const faltanteBaseSeca = Math.max(META_BRUTA * 0.97 - baseSeca, 0);
+        metaFaltanteBruta.textContent = faltanteBruta.toFixed(2) + " toneladas";
+        metaFaltanteBaseSeca.textContent = faltanteBaseSeca.toFixed(2) + " toneladas";
 
-        metaFaltanteBruta.textContent = faltanteBruta.toFixed(2) + "t";
-        metaFaltanteBaseSeca.textContent = faltanteBaseSeca.toFixed(2) + "t";
+        // Calcula a produção estimada
+        calcularProducaoEstimada();
     });
-});
 
-document.addEventListener("DOMContentLoaded", function() {
-    const agora = new Date();
-    const horaAtual = agora.getHours();
-    const minutosAtuais = agora.getMinutes();
+    // Função para exibir a data e hora atual
+    function exibirDataHora() {
+        const dataAtual = new Date();
+        const dia = String(dataAtual.getDate()).padStart(2, "0");
+        const mes = String(dataAtual.getMonth() + 1).padStart(2, "0");
+        const ano = dataAtual.getFullYear();
+        const horas = String(dataAtual.getHours()).padStart(2, "0");
+        const minutos = String(dataAtual.getMinutes()).padStart(2, "0");
+        const segundos = String(dataAtual.getSeconds()).padStart(2, "0");
 
-    const estaNoTurno = (horaAtual >= 7 && (horaAtual < 19 || (horaAtual === 18 && minutosAtuais <= 59)));
-
-    if (!estaNoTurno) {
-        exibirPopUpForaDoTurno();
+        const dataFormatada = `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
+        dataHoraElement.textContent = dataFormatada;
     }
 
-    function exibirPopUpForaDoTurno() {
-        const popup = document.createElement("div");
-        popup.classList.add("popup-turno");
-        popup.innerHTML = "<p>⚠ FORA DO TURNO ⚠</p><p>O turno de operação vai de 07:01 às 18:59.</p>";
-        document.body.appendChild(popup);
-    }
+    // Atualiza a produção estimada a cada segundo
+    setInterval(calcularProducaoEstimada, 1000);
+
+    // Atualiza a data e hora a cada segundo
+    setInterval(exibirDataHora, 1000);
 });
-
-
 
 
